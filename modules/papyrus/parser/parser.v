@@ -296,9 +296,13 @@ pub fn (mut p Parser) property_decl() ast.PropertyDecl {
 
 	if !no_body {
 
+
 		mut i := 0
 
 		for i < 2 {
+			if p.tok.kind == .comment {
+				p.next()
+			}
 			if p.tok.kind == .key_endproperty {
 				break
 			}
