@@ -169,7 +169,7 @@ pub fn (mut p Parser) call_args() []ast.CallArg {
 
 		arg_start_pos := p.tok.position()
 
-		/*if p.tok.kind == .name && p.peek_tok.kind == .assign {
+		if p.tok.kind == .name && p.peek_tok.kind == .assign {
 			name := p.check_name()
 			p.next()
 			expr := p.expr(0)
@@ -183,14 +183,14 @@ pub fn (mut p Parser) call_args() []ast.CallArg {
 				pos: pos
 			}
 		}
-		else {*/
+		else {
 			e := p.expr(0)
 			pos := arg_start_pos.extend(p.prev_tok.position())
 			args << ast.CallArg{
 				expr: e
 				pos: pos
 			}
-		//}
+		}
 
 		match p.tok.kind {
 			.rpar {
