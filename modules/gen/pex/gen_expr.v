@@ -206,7 +206,18 @@ fn (mut g Gen) gen_call(calltype pex.OpCode, expr &ast.CallExpr) pex.VariableDat
 
 	//аргументы функции
 	for fn_arg in expr.args {
-		args << g.get_operand_from_expr(&fn_arg.expr)
+		if !(fn_arg.expr is ast.DefaultValue){
+			args << g.get_operand_from_expr(&fn_arg.expr)
+		} else{
+			match fn_arg.expr {
+				ast.DefaultValue {
+					args << g.get_operand_from_expr(&fn_arg.expr.expr)
+				} else{
+					panic("Gen error: Default function arg error")
+				}
+			}
+		}
+		
 		vars << args.last()
 	}
 
@@ -453,7 +464,7 @@ fn (mut g Gen) get_operand_from_expr(expr &ast.Expr) pex.VariableData {
 			var_data = pex.VariableData{ typ: 0 }
 		}
 		else {
-			panic("Unknown expression")
+			panic("Unknown expression: " + expr.type_name() )
 		}
 	}
 

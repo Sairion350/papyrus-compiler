@@ -161,6 +161,7 @@ pub fn (mut p Parser) call_args() []ast.CallArg {
 	mut args := []ast.CallArg{}
 	start_pos := p.tok.position()
 
+	mut i := 0
 	for p.tok.kind != .rpar {
 		if p.tok.kind == .eof {
 			p.error_with_pos('unexpected eof reached, while parsing call argument', start_pos)
@@ -181,6 +182,7 @@ pub fn (mut p Parser) call_args() []ast.CallArg {
 					pos: pos
 				}
 				pos: pos
+				arg_id: i
 			}
 		}
 		else {
@@ -189,8 +191,11 @@ pub fn (mut p Parser) call_args() []ast.CallArg {
 			args << ast.CallArg{
 				expr: e
 				pos: pos
+				arg_id: i
 			}
 		}
+
+		i++
 
 		match p.tok.kind {
 			.rpar {

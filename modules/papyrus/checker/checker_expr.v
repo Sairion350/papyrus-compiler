@@ -192,7 +192,8 @@ pub fn (mut c Checker) expr(node ast.Expr) ast.Type {
 			return ast.none_type
 		}
 		ast.DefaultValue{
-			panic("===checker.v WTF expr()===")
+			//panic("===checker.v WTF expr()===")
+			return c.expr(node.expr)
 		}
 	}
 
@@ -426,7 +427,13 @@ pub fn (mut c Checker) call_expr(mut node &ast.CallExpr) ast.Type {
 			return ast.none_type
 		}
 
-		//добавляем параметры по умолчанию
+		for index,value in node.args{
+			if value.arg_id != index {
+				c.error("TODO unsupported: out of order optional params " + value.arg_id.str() + " " + index.str(), node.pos)
+			}
+		}
+
+		//fill remaining default parameters
 		if node.args.len < func.params.len {
 			mut i := node.args.len
 			for i < func.params.len {

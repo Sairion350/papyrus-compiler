@@ -91,6 +91,7 @@ pub:
 pub mut:
 	expr	Expr
 	typ		ast.Type
+	arg_id	int 
 }
 
 pub struct CallExpr {
