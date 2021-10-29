@@ -173,3 +173,15 @@ pub fn (expr Expr) position() token.Position {
 		// maintaining/implementing proper .pos fields.
 	}
 }
+
+pub fn (expr Expr) is_literal() bool {
+	match expr {
+		FloatLiteral, IntegerLiteral, BoolLiteral,
+		 StringLiteral, NoneLiteral {
+			return true
+		}else{
+		return false 
+	}
+	} 
+	
+}

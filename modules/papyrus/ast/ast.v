@@ -89,6 +89,13 @@ pub mut:
 	write			Handler
 }
 
+pub struct ConstVar {
+pub mut:
+	name 			string
+	typ 			ast.Type
+	val 			ast.Expr 
+}
+
 pub struct Return {
 pub mut:
 	pos		token.Position

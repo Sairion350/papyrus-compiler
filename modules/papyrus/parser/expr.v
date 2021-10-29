@@ -336,6 +336,14 @@ pub fn (mut p Parser) name_expr() ast.Expr {
 		}
 	}
 
+	if p.tok.kind == .name{
+		for i in p.constvars{
+			if p.tok.lit.to_lower() == i.name{
+				p.next()
+				return i.val
+			}
+		}
+	}
 	return p.parse_ident()
 }
 

@@ -122,6 +122,12 @@ fn (mut p Parser) fn_args() []ast.Param {
 			param.typ = p.get_parsed_type()
 			
 			param.name = p.check_name()
+			for i in p.constvars{
+				if param.name.to_lower() == i.name{
+					p.error("Param name conflict with const")
+				}
+			}
+
 			
 			if p.tok.kind == .assign {
 				p.next()
