@@ -35,10 +35,6 @@ mut:
 	cur_object			ast.Type //current object type
 
 	parsed_type			ast.Type //спаршеный тип
-	extendedlang		bool 
-
-	constvars 			[]ast.ConstVar
-
 }
 
 pub fn (mut p Parser) set_path(path string) {
@@ -181,9 +177,6 @@ pub fn (mut p Parser) top_stmt() ?ast.TopStmt {
 			.key_state {
 				return p.state_decl()
 			}
-			.key_const {
-				p.const_decl()
-			}
 			else {
 				p.error("(top statement) invalid token: " + p.tok.kind.str() + ", " + "p.tok.lit")
 			}
@@ -206,67 +199,6 @@ pub fn (mut p Parser) parse_flags() []token.Kind {
 
 	return flags
 }
-
-pub fn (mut p Parser) const_decl() {
-	p.extendedlang_check()
-	p.next()
-
-	if p.next_is_type(){
-		p.parse_type()
-		typ := p.get_parsed_type()
-		name := p.check_name().to_lower()
-		mut expr := ast.Expr(ast.EmptyExpr{})
-
-		if p.tok.kind == .assign {
-			p.next()
-			expr = p.expr(0)
-			if !expr.is_literal(){
-				p.error("const: literal required")
-			}
-
-			mut typecheck := 0
-			match expr {
-				ast.FloatLiteral{
-					typecheck = ast.float_type
-				} ast.IntegerLiteral{
-					typecheck = ast.int_type
-				}
-				ast.StringLiteral{
-					typecheck = ast.string_type
-				}ast.BoolLiteral{
-					typecheck = ast.bool_type
-				}ast.NoneLiteral{
-					typecheck = ast.none_type
-				}
-				else{
-					p.error_with_pos("const: type error", p.prev_tok.position())
-				}
-			}
-			if typecheck != typ {
-				p.error_with_pos("const: type mismatch", p.prev_tok.position())
-			}
-
-
-		}else{
-			p.error("const: Assignment required")
-		}
-
-		//pos = pos.extend(p.prev_tok.position())
-
-
-		p.constvars << ast.ConstVar{
-			typ: typ
-			name: name
-			val: expr
-		}
-		} else {
-			p.error("const: no type given")
-	}
-
-
-	
-}
-
 
 pub fn (mut p Parser) state_decl() ast.StateDecl {
 	pos := p.tok.position()
@@ -417,16 +349,7 @@ pub fn (mut p Parser) script_decl() ast.ScriptDecl {
 	
 	pos := p.tok.position()
 
-	match p.tok.kind{
-		.key_scriptname{
-			p.next()
-		}.key_extendedscriptname{
-			p.extendedlang = true 
-			p.next()
-		}else{
-			p.error('unexpected `$p.tok.kind.str()`')
-		}
-	}
+	p.check(.key_scriptname)
 
 	name := p.check_name()
 
@@ -475,7 +398,6 @@ pub fn (mut p Parser) read_first_token() {
 	p.next()
 	p.next()
 }
-
 
 [inline]
 fn (mut p Parser) next() {
@@ -529,13 +451,6 @@ pub fn (mut p Parser) parse_expr_stmt() ast.Stmt {
 	}
 }
 
-pub fn (mut p Parser) extendedlang_check() {
-	if !p.extendedlang{
-		p.error("This feature is only available in p++")
-	}
-}
-
-
 [inline]
 pub fn (mut p Parser) var_decl(is_obj_var bool) ast.VarDecl {
 	
@@ -544,11 +459,6 @@ pub fn (mut p Parser) var_decl(is_obj_var bool) ast.VarDecl {
 	typ := p.get_parsed_type()
 
 	name := p.check_name()
-	for i in p.constvars{
-		if name.to_lower() == i.name{
-			p.error("Name conflict with const")
-		}
-	}
 	mut expr := ast.Expr(ast.EmptyExpr{})
 
 	if p.tok.kind == .assign {

@@ -80,7 +80,6 @@ pub enum Kind {
 	key_endwhile
 	key_new
 	key_return
-	key_const
 
 	key_event
 	key_endevent
@@ -107,7 +106,6 @@ pub enum Kind {
 	key_none
 	key_parent
 	key_scriptname
-	key_extendedscriptname
 	key_extends
 	key_self
 
@@ -196,7 +194,6 @@ fn build_token_str() []string {
 	s[Kind.key_function] = 'function'
 	s[Kind.key_global] = 'global'
 	s[Kind.key_if] = 'if'
-	s[Kind.key_const] = 'const'
 	s[Kind.key_import] = 'import'
 	s[Kind.key_int] = 'int'
 	//s[Kind.key_length] = 'length'
@@ -207,7 +204,6 @@ fn build_token_str() []string {
 	s[Kind.key_property] = 'property'
 	s[Kind.key_return] = 'return'
 	s[Kind.key_scriptname] = 'scriptname'
-	s[Kind.key_extendedscriptname] = 'scriptplus'
 	s[Kind.key_self] = 'self'
 	s[Kind.key_state] = 'state'
 	s[Kind.key_string] = 'string'
